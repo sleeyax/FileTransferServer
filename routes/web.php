@@ -14,3 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/test/upload', function() {
+    return view('tests/upload');
+});
+Route::post('/test', 'TestController@test');
+Route::get('/file/info/{key}', 'FileController@info');
+Route::get('/file/verify/{key}', 'FileController@verify');
+Route::get('/file/download/{key}', 'FileController@download');
+Route::post('/file/upload', 'FileController@upload');
