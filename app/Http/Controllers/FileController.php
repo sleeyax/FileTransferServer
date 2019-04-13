@@ -6,6 +6,8 @@ use App\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+
 
 class FileController extends Controller
 {
@@ -13,11 +15,20 @@ class FileController extends Controller
 
     public function __construct() {}
 
+    /**
+     * Upload a file to the storage & database
+     * method: POST
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|string
+     */
     public function upload(Request $request) {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'file' => 'required',
-            'max_downloads' => 'required|min:1|max:999'
+            'max_downloads' => 'required|numeric|min:0|max:999'
         ]);
+        if ($validator->fails()) {
+            return response()->json(array_merge($validator->errors()->toArray(), ['status' => Response::HTTP_BAD_REQUEST]));
+        }
 
         // Save file to storage
         $uploadedFile = $request->file('file');
@@ -36,6 +47,7 @@ class FileController extends Controller
     }
 
     /**
+     * Download a file
      * @param string   $key
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      * @throws \Exception
@@ -61,6 +73,11 @@ class FileController extends Controller
     }
 
 
+    /**
+     * Return info about file with specified key
+     * @param string $key
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function info(string $key) {
         $file = File::getByKey($key);
 
