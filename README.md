@@ -1,15 +1,24 @@
 # FileTransferServer
 Server for [FileTransferClient](https://github.com/sleeyax/FileTransferClient)
 
-## Installation
+## Production
+Clone the repo to your VPS and run:
+```
+$ composer install --no-dev
+$ npm install --production
+$ mv .env.example .env
+```
+Edit `.env` to change your database settings and run  `php artisan migrate` to create the tables. 
+
+For server requirements, see the [laravel documentation](https://laravel.com/docs/5.8/installation#server-requirements)
+
+## Development
+Same procedure as the Production steps, but run
 ```
 $ composer install
 $ npm install
 ```
-Edit the configuration files to your likings and create the database tables using `php artisan migrate`. 
-Finally, upload everything to your webserver.
-
-For server requirements, see the [laravel documentation](https://laravel.com/docs/5.8/installation#server-requirements)
+to install dev dependencies
 
 ## Links
 [FileTransferClient](https://github.com/sleeyax/FileTransferClient) - client source code
