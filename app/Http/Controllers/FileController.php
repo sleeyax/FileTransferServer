@@ -24,7 +24,7 @@ class FileController extends Controller
     public function upload(Request $request) {
         $validator = Validator::make($request->all(), [
             'file' => 'required',
-            'max_downloads' => 'required|numeric|min:0|max:999'
+            'max_downloads' => 'required|numeric|min:0|max:999',
         ]);
         if ($validator->fails()) {
             return response()->json(array_merge($validator->errors()->toArray(), ['status' => Response::HTTP_BAD_REQUEST]));
@@ -60,16 +60,18 @@ class FileController extends Controller
             return response()->json(['status' => Response::HTTP_NOT_FOUND, 'message' => 'File not found!']);
         }
 
-        // If max amount of downloads reached, delete the file
-        if ($file->max_downloads != 0 && $file->downloads >= $file->max_downloads) {
-            // $file->delete();
-            return response()->json(['status' => Response::HTTP_FORBIDDEN, 'message' => 'Max. number of downloads reached!']);
-        }
+        $fileStream = Storage::download("$this->storagePath/$file->name", $file->original_name);
 
         $file->downloads++;
         $file->save();
 
-        return Storage::download("$this->storagePath/$file->name", $file->original_name);
+        // If max amount of downloads reached, delete the file
+        if ($file->max_downloads != 0 && $file->downloads >= $file->max_downloads) {
+            $file->delete();
+            Storage::delete($file->name);
+        }
+
+        return $fileStream;
     }
 
 
