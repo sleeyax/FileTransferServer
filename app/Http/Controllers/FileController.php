@@ -68,7 +68,7 @@ class FileController extends Controller
         // If max amount of downloads reached, delete the file
         if ($file->max_downloads != 0 && $file->downloads >= $file->max_downloads) {
             $file->delete();
-            Storage::delete($file->name);
+            Storage::delete("$this->storagePath/$file->name");
         }
 
         return $fileStream;
